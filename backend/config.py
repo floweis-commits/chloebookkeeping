@@ -35,6 +35,10 @@ class Settings(BaseSettings):
     glm_base_url: str = "https://open.bigmodel.cn/api/paas/v4"
     glm_model: str = "glm-4.5"
 
+    # Email (Resend)
+    resend_api_key: str = ""
+    app_url: str = "http://localhost:3000"
+
     # Storage
     storage_backend: str = "local"
     storage_local_path: str = "./storage"

@@ -9,15 +9,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api import auth, files, flagged, permissions, reports, users, integrations
 from backend.db.database import engine, Base
+from backend.services.scheduler import start_scheduler, stop_scheduler
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: create tables (dev only — use Alembic in production)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    start_scheduler()
     yield
-    # Shutdown: dispose of connection pool
+    await stop_scheduler()
     await engine.dispose()
 
 

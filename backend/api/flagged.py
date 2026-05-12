@@ -12,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.api.deps import get_db, require_role, SupabaseUser
-from backend.db.models import FlaggedItem
+from backend.db.models import FlaggedItem, Report
 
 router = APIRouter(prefix="/api/flagged", tags=["flagged"])
 
@@ -95,7 +95,34 @@ async def review_flagged_item(
     item.reviewed_at = datetime.utcnow()
     await db.commit()
 
-    return {"status": "success", "item_id": item_id, "new_status": body.status}
+    # Check if all pending items for this tenant are now resolved → trigger report generation
+    pending_result = await db.execute(
+        select(FlaggedItem).where(
+            FlaggedItem.tenant_id == item.tenant_id,
+            FlaggedItem.status == "pending",
+        )
+    )
+    remaining_pending = pending_result.scalars().all()
+
+    if not remaining_pending:
+        # Find the most recent report in pending_review state for this tenant
+        report_result = await db.execute(
+            select(Report).where(
+                Report.tenant_id == item.tenant_id,
+                Report.status == "pending_review",
+            ).order_by(Report.created_at.desc())
+        )
+        report = report_result.scalars().first()
+        if report:
+            report.status = "ready"
+            await db.commit()
+            # Kick off PDF generation in the background
+            from backend.services.scheduler import trigger_report_generation
+            import asyncio
+            asyncio.create_task(trigger_report_generation(str(report.id)))
+
+    return {"status": "success", "item_id": item_id, "new_status": body.status,
+            "queue_cleared": not remaining_pending}
 
 
 @router.get("/{tenant_id}/summary")

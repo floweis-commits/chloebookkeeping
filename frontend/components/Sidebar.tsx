@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, FolderOpen, FileBarChart, Settings, Plug } from "lucide-react";
+import { Home, FolderOpen, FileBarChart, Settings, Plug, ClipboardCheck } from "lucide-react";
 import clsx from "clsx";
 import { signOut } from "@/lib/auth";
 import { useUser } from "@/components/UserProvider";
@@ -53,18 +53,32 @@ export default function Sidebar() {
         })}
 
         {role === "bookkeeper" && (
-          <Link
-            href="/integrations"
-            className={clsx(
-              "mb-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-              pathname.startsWith("/integrations")
-                ? "bg-blush-100 text-blush-700"
-                : "text-gray-500 hover:bg-blush-50 hover:text-gray-700"
-            )}
-          >
-            <Plug size={20} />
-            Integrations
-          </Link>
+          <>
+            <Link
+              href="/review"
+              className={clsx(
+                "mb-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                pathname.startsWith("/review")
+                  ? "bg-blush-100 text-blush-700"
+                  : "text-gray-500 hover:bg-blush-50 hover:text-gray-700"
+              )}
+            >
+              <ClipboardCheck size={20} />
+              Review Queue
+            </Link>
+            <Link
+              href="/integrations"
+              className={clsx(
+                "mb-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                pathname.startsWith("/integrations")
+                  ? "bg-blush-100 text-blush-700"
+                  : "text-gray-500 hover:bg-blush-50 hover:text-gray-700"
+              )}
+            >
+              <Plug size={20} />
+              Integrations
+            </Link>
+          </>
         )}
       </nav>
 

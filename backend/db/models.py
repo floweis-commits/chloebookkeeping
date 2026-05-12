@@ -98,10 +98,18 @@ class Report(Base):
     period_end = Column(DateTime, nullable=False)
     file_path = Column(Text)  # path to generated PDF
     data = Column(JSONB)  # raw sync results from API integrations + KPIs
-    client_name = Column(String(255), nullable=True)  # client business name
-    bookkeeper_name = Column(String(255), nullable=True)  # bookkeeper full name
-    logo_path = Column(Text, nullable=True)  # path to client logo if available
-    generated_at = Column(DateTime, default=datetime.utcnow)
+    client_name = Column(String(255), nullable=True)
+    bookkeeper_name = Column(String(255), nullable=True)
+    logo_path = Column(Text, nullable=True)
+    # Workflow state machine:
+    # data_pulled → pending_review → ready → generated → delivered
+    status = Column(String(30), default="data_pulled", nullable=False)
+    flagged_count = Column(Integer, default=0)       # items needing review
+    reviewed_count = Column(Integer, default=0)      # items cleared
+    reminder_sent_at = Column(DateTime, nullable=True)
+    generated_at = Column(DateTime, nullable=True)
+    delivered_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     tenant = relationship("Tenant", back_populates="reports")
 
