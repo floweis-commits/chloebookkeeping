@@ -36,7 +36,7 @@ from backend.connectors.paypal import get_paypal_connector_for_tenant
 from backend.connectors.stripe import get_stripe_connector_for_tenant
 from backend.agents.categorizer import CategorizerAgent
 from backend.agents.reconciler import ReconcilerAgent
-from backend.services.email import send_review_reminder, send_report_ready
+from backend.services.email import send_review_reminder
 
 scheduler = AsyncIOScheduler(timezone="America/Denver")
 
@@ -218,15 +218,6 @@ async def trigger_report_generation(report_id: str) -> None:
             report.status = "generated"
             report.generated_at = datetime.utcnow()
             await db.commit()
-
-            # Notify Chloe
-            period_label = _period_label(report.period_end.date())
-            await send_report_ready(
-                to=BOOKKEEPER_EMAIL,
-                period_label=period_label,
-                client_name=report.client_name or COMPANY_NAME,
-                app_url=settings.app_url,
-            )
 
         except Exception as e:
             print(f"[scheduler] Report generation failed for {report_id}: {e}")
