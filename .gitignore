@@ -1,0 +1,53 @@
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Database
+*.db
+
+# Uploads / storage
+uploads/
+storage/
+
+# Claude / agent internals
+.claude/
+.agents/
+skills-lock.json
+
+# Reference docs not needed in repo
+*.pdf
+Screenshot*.png
+"Screenshot *.png"
+DELIVERY_SUMMARY.txt
+DEPLOYMENT_CHECKLIST.md
+IMPLEMENTATION_CHECKLIST.md
+IMPLEMENTATION_SUMMARY.md
+REPORT_GENERATOR_IMPLEMENTATION.md
+INTEGRATIONS.md
