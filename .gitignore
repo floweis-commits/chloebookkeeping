@@ -32,9 +32,11 @@ Thumbs.db
 # Database
 *.db
 
-# Uploads / storage
+# Uploads / storage (data dirs only, not the Python module)
 uploads/
-storage/
+storage/*.pdf
+storage/*.csv
+storage/*.xlsx
 
 # Claude / agent internals
 .claude/
